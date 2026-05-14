@@ -1,21 +1,22 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 
 /* ---------------- CORS ---------------- */
-// allow all for now (can restrict later)
 app.use(cors());
 app.use(express.json());
 
 /* ---------------- ENV CONFIG ---------------- */
 const PORT = process.env.PORT || 5001;
-
-// ⚠️ Move this to .env later
-const MONGO_URI = "mongodb+srv://Sayalip:sayali123@cluster1.vrhcdez.mongodb.net/studentDB?retryWrites=true&w=majority";
+const MONGO_URI = process.env.MONGO_URI;
 
 /* ---------------- DB CONNECT ---------------- */
+console.log("URI =", process.env.MONGO_URI);
 mongoose.connect(MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch(err => console.log("❌ DB Error:", err));
@@ -30,7 +31,7 @@ const Student = mongoose.model("Student", {
 
 /* ---------------- ROUTES ---------------- */
 
-// GET all
+// GET all students
 app.get("/students", async (req, res) => {
   try {
     console.log("GET HIT");
@@ -41,7 +42,7 @@ app.get("/students", async (req, res) => {
   }
 });
 
-// ADD
+// ADD student
 app.post("/students", async (req, res) => {
   try {
     const student = await Student.create(req.body);
@@ -51,7 +52,7 @@ app.post("/students", async (req, res) => {
   }
 });
 
-// UPDATE
+// UPDATE student
 app.put("/students/:id", async (req, res) => {
   try {
     const updated = await Student.findByIdAndUpdate(
@@ -65,7 +66,7 @@ app.put("/students/:id", async (req, res) => {
   }
 });
 
-// DELETE
+// DELETE student
 app.delete("/students/:id", async (req, res) => {
   try {
     await Student.findByIdAndDelete(req.params.id);
